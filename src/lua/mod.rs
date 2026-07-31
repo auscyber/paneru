@@ -141,7 +141,7 @@ impl LuaRuntime {
     /// Runs every `paneru.on(name, ...)` handler. Handlers are cloned out of the
     /// registry first so a handler that registers another one cannot deadlock on
     /// the borrow. One failing handler does not stop the rest.
-    fn dispatch_event(&self, name: &str, event: Table) {
+    fn dispatch_event(&self, name: &str, event: &Table) {
         let handlers = self
             .registry
             .borrow()
@@ -222,7 +222,7 @@ pub fn dispatch_lua_events(
     let mut dispatched = false;
     for event in reader.read() {
         if let Some((name, table)) = convert::event_to_lua(runtime.lua(), event) {
-            runtime.dispatch_event(name, table);
+            runtime.dispatch_event(name, &table);
             dispatched = true;
         }
     }
@@ -400,7 +400,7 @@ mod tests {
         )
         .unwrap();
         let (name, table) = convert::event_to_lua(runtime.lua(), &Event::SpaceChanged).unwrap();
-        runtime.dispatch_event(name, table);
+        runtime.dispatch_event(name, &table);
         assert_eq!(drained_commands(&runtime).len(), 1);
     }
 

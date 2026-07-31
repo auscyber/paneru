@@ -57,6 +57,9 @@ fn send(argv: &[String]) -> LuaResult<UnixStream> {
 
 /// The primitive the shared API is built on: encode the command and send it to
 /// the daemon (fire-and-forget).
+// Takes `Command` by value to match the shared `crate::Dispatch` closure type,
+// which every verb closure in `lib.rs` also has to satisfy.
+#[allow(clippy::needless_pass_by_value)]
 fn dispatch(_: &Lua, command: Command) -> LuaResult<bool> {
     let argv = command.to_argv().ok_or_else(|| {
         LuaError::RuntimeError(format!("{command:?} cannot be sent to the daemon"))
@@ -167,6 +170,10 @@ fn socket_path(_: &Lua, (): ()) -> LuaResult<String> {
 }
 
 /// Builds the module table `require("paneru")` hands back.
+///
+/// # Errors
+///
+/// Returns an error if any Lua table/function creation or assignment fails.
 pub fn module(lua: &Lua, version: &str) -> LuaResult<LuaTable> {
     let exports = lua.create_table()?;
 

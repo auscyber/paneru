@@ -111,6 +111,7 @@ impl QueryState {
     /// The windows currently on screen, left to right per display. Drawn from
     /// the same rows as the rest of the document — there is no separate
     /// on-screen state, only the visible subset of it.
+    #[must_use]
     pub fn on_screen(&self) -> Vec<&WindowState> {
         let mut on_screen = self
             .virtual_workspaces
