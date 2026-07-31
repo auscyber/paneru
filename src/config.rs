@@ -1121,6 +1121,24 @@ where
         .map_err(|e: Error| serde::de::Error::custom(e.to_string()))
 }
 
+/// Resolves a keybinding chord string like `"ctrl+alt-h"` into a `(keycode, Modifiers)`
+/// pair, generating the layout-aware virtual keymap on demand.
+///
+/// This is the entry point used by the Lua runtime's `paneru.bind`, so scripted
+/// keybinds accept the exact same chord syntax as the TOML `[bindings]` table.
+#[cfg(feature = "lua")]
+pub(crate) fn resolve_chord(input: &str) -> Result<(u8, Modifiers)> {
+    // Fast path: resolve against the built-in keymaps first. This avoids the
+    // Carbon/TIS FFI (which is main-thread/GUI-session sensitive) for the common
+    // case and keeps `paneru.bind` usable in headless unit tests.
+    if let Ok(resolved) = resolve_keybinding_str(input, &[]) {
+        return Ok(resolved);
+    }
+    // Fall back to the layout-aware virtual keymap for layout-specific keys.
+    let virtual_keys = generate_virtual_keymap();
+    resolve_keybinding_str(input, &virtual_keys)
+}
+
 /// Resolves a keybinding string like `"ctrl+alt-h"` into a `(keycode, Modifiers)` pair.
 fn resolve_keybinding_str(input: &str, virtual_keys: &[(String, u8)]) -> Result<(u8, Modifiers)> {
     let mut parts: Vec<&str> = input.split('-').map(str::trim).collect();
