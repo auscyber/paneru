@@ -56,9 +56,7 @@ type QueryStateExtractionState<'w, 's> = SystemState<(
 
 fn extract_query_state(world: &mut World) -> crate::errors::Result<PaneruQueryState> {
     let mut system_state: QueryStateExtractionState<'_, '_> = SystemState::new(world);
-    let (workspaces, displays, windows, apps, window_manager) = system_state.get(world)?;
-    let (workspaces, displays, windows, apps, window_manager) = system_state.get(world);
-    PaneruQueryState::extract(&workspaces, &displays, &windows, &apps, &window_manager)
+    let (workspaces, displays, windows, apps, window_manager, config) = system_state.get(world)?;
     PaneruQueryState::extract(
         &workspaces,
         &displays,
