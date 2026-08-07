@@ -362,10 +362,9 @@ impl WindowOS {
                     kCFBooleanFalse.unwrap(),
                 );
             }
-            // Incremented rather than set: two windows of the same app can both
-            // have found no entry above and raced here, and each still owes a
-            // matching `reenable_enhanced_ui`. Setting 1 would leave the second
-            // one decrementing past zero. Disabling twice is harmless.
+            // Incremented rather than set: two windows of the same app can race
+            // here and both owe a matching `reenable_enhanced_ui`; setting 1
+            // would let the second one decrement past zero.
             *ENHANCED_UI_REFCOUNT
                 .lock()
                 .unwrap_or_else(std::sync::PoisonError::into_inner)

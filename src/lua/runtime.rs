@@ -864,12 +864,11 @@ mod tests {
         assert_eq!(world.get("pad"), None);
     }
 
-    /// `paneru.exec` has to suspend the handler rather than hold the
-    /// interpreter, which is the whole reason it exists: a synchronous exec
-    /// binding stops every other handler until the child exits.
+    /// `paneru.exec` suspends the handler instead of holding the interpreter,
+    /// so a slow child process does not stall every other handler.
     ///
-    /// Driven by hand rather than through `drive`, which spins a fixed number of
-    /// turns and would give up long before a real process finished.
+    /// Uses `drive_patiently` rather than `drive`, which spins a fixed number
+    /// of turns and would give up before a real process finished.
     #[test]
     fn exec_runs_a_program_and_hands_back_its_output() {
         let world = TestWorld::default();
