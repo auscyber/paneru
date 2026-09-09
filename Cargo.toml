@@ -1,6 +1,6 @@
 [package]
 name = "paneru"
-version = "0.4.4"
+version = "0.5.0"
 edition = "2024"
 rust-version = "1.95.0"
 description = "A sliding, tiling window manager for MacOS."
@@ -21,7 +21,7 @@ default-members = ["."]
 [workspace.dependencies]
 cfg-if = "1.0.4"
 futures-lite = "2.6"
-mach2 = "0.6"
+mach2 = "0.7"
 mlua = { version = "0.12", default-features = false, features = ["serialize"] }
 paneru-lua = { path = "crates/lua" }
 paneru-mach-ipc = { path = "crates/mach_ipc" }
@@ -101,9 +101,7 @@ async-channel = "2.5"
 async-lock = "3.4"
 async-executor = { version = "1.14", optional = true }
 futures-lite = { workspace = true }
-bevy = { version = "0.19", default-features = false, features = [
-  "multi_threaded",
-] }
+bevy = { version = "0.19", default-features = false, features = [ "multi_threaded" ] }
 bitflags = "2.13"
 chrono = "0.4"
 clap = { version = "4.6", features = ["cargo", "derive"] }
